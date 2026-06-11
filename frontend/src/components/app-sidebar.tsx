@@ -19,7 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  // SidebarCloseButton,   // ← Added
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -67,8 +67,7 @@ export function AppSidebar() {
             )}
           </div>
 
-          {/* Close Button - Visible when sidebar is expanded */}
-          {/* {!collapsed && <SidebarCloseButton />} */}
+          <SidebarTrigger className="ml-auto h-8 w-8 rounded-md border border-transparent hover:bg-primary/10 hover:text-primary" />
         </div>
       </SidebarHeader>
 

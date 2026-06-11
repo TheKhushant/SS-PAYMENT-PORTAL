@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy } from "react";           // ← Make sure this line exists
+import { lazy } from "react";           // ← Make sure this line exists
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AuthProvider, DataProvider } from "@/lib/store";
@@ -34,6 +34,7 @@ function App() {
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="students" element={<Students />} />
+                <Route path="students/index" element={<NewStudent />} />
                 <Route path="students/new" element={<NewStudent />} />
                 <Route path="students/:id" element={<StudentDetail />} />
                 <Route path="payments" element={<Payments />} />

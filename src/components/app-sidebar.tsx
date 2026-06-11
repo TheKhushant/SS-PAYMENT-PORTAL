@@ -19,6 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  // SidebarCloseButton,   // ← Added
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -42,21 +43,32 @@ export function AppSidebar() {
   const pathname = location.pathname;
 
   const isActive = (url: string) =>
-    url === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(url);
+    url === "/dashboard"
+      ? pathname === "/dashboard"
+      : pathname.startsWith(url);
 
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="size-9 rounded-lg bg-primary text-primary-foreground grid place-items-center shrink-0">
-            <GraduationCap className="size-5" />
-          </div>
-          {!collapsed && (
-            <div className="leading-tight">
-              <div className="font-semibold text-sm">FeeFlow</div>
-              <div className="text-[11px] text-muted-foreground">Admin Console</div>
+        <div className="flex items-center justify-between px-2 py-2">
+          {/* Logo + Title */}
+          <div className="flex items-center gap-2">
+            <div className="size-9 rounded-lg bg-primary text-primary-foreground grid place-items-center shrink-0">
+              <GraduationCap className="size-5" />
             </div>
-          )}
+
+            {!collapsed && (
+              <div className="leading-tight">
+                <div className="font-semibold text-sm">FeeFlow</div>
+                <div className="text-[11px] text-muted-foreground">
+                  Admin Console
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Close Button - Visible when sidebar is expanded */}
+          {/* {!collapsed && <SidebarCloseButton />} */}
         </div>
       </SidebarHeader>
 
@@ -65,12 +77,16 @@ export function AppSidebar() {
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {main.map((i) => (
-                <SidebarMenuItem key={i.title}>
-                  <SidebarMenuButton asChild isActive={isActive(i.url)} tooltip={i.title}>
-                    <Link to={i.url}>
-                      <i.icon />
-                      <span>{i.title}</span>
+              {main.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -83,12 +99,16 @@ export function AppSidebar() {
           <SidebarGroupLabel>Manage</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {manage.map((i) => (
-                <SidebarMenuItem key={i.title}>
-                  <SidebarMenuButton asChild isActive={isActive(i.url)} tooltip={i.title}>
-                    <Link to={i.url}>
-                      <i.icon />
-                      <span>{i.title}</span>
+              {manage.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

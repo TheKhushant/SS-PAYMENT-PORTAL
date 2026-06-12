@@ -104,23 +104,23 @@ export default function NewStudent() {
     });
 
     const student = await addStudent({
-    name,
-    mobile,
-    email,
-    college,
-    admissionDate: new Date(admissionDate).toISOString(),
-    courseId,
-    durationMonths: duration,
-    courseFee: fee,
-    discount,
-    scholarship,
-    installments: ins,
-  });
+      name,
+      mobile,
+      email,
+      college,
+      admissionDate: new Date(admissionDate).toISOString(),
+      courseId,
+      durationMonths: duration,
+      courseFee: fee,
+      discount,
+      scholarship,
+      installments: ins,
+    });
 
   console.log(courses);
 
-  toast.success("Student created");
-  navigate(`/students/${student.id}`);
+  toast.success("Student created successfully");
+  navigate("/students");
   };
 
   return (
@@ -133,7 +133,7 @@ export default function NewStudent() {
             <Button type="button" variant="outline" onClick={() => navigate("/students")}>
               <ArrowLeft className="mr-2 size-4" /> Back
             </Button>
-            <Button type="submit">Create Student</Button>
+            <Button type="submit">Submit</Button>
           </>
         }
       />

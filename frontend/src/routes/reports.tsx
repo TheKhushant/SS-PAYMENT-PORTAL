@@ -1,4 +1,4 @@
-import { studentTotals, useData, inr } from "@/lib/store";
+import { studentTotals, useData } from "@/lib/store";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ export default function ReportsPage() {
   };
 
   const exportMonthly = () => {
-    const now = new Date();
+    // const now = new Date();
     const map = new Map<string, number>();
     payments.forEach((p) => {
       const d = new Date(p.date);

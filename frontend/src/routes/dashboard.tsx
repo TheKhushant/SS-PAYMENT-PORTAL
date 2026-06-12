@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { studentTotals, useData, inr, isSameDay, isSameMonth } from "@/lib/store";
+import { useData, inr, isSameDay, isSameMonth } from "@/lib/store";
 import { KpiCard } from "@/components/kpi-card";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";

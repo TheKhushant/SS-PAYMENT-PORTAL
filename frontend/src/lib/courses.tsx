@@ -51,12 +51,12 @@ export default function CoursesPage() {
                 {ALL_DURATIONS.map((d) => (
                   <div key={d} className="rounded-lg border p-2.5">
                     <div className="text-xs text-muted-foreground">{d} Month{d > 1 ? "s" : ""}</div>
-                    <div className="text-base font-semibold mt-0.5">{inr(c.pricing[d] ?? 0)}</div>
+                    <div className="text-base font-semibold mt-0.5">{inr(c.pricing?.[d] ?? 0)}</div>
                   </div>
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </Card> 
         ))}
       </div>
 
@@ -66,7 +66,7 @@ export default function CoursesPage() {
         course={editing}
         onSave={(data) => {
           if (editing) { 
-            updateCourse(editing.id, data); 
+            updateCourse(editing._id, data); 
             toast.success("Course updated"); 
           } else { 
             addCourse({ ...data, durations: ALL_DURATIONS }); 
@@ -87,20 +87,36 @@ function CourseDialog({
   open: boolean; 
   onOpenChange: (o: boolean) => void;
   course: Course | null;
-  onSave: (data: Omit<Course, "id">) => void;
+  onSave: (data: Omit<Course, "_id">) => void;
 }) {
   const [name, setName] = useState(course?.name ?? "");
   const [desc, setDesc] = useState(course?.description ?? "");
-  const [pricing, setPricing] = useState<Record<DurationMonths, number>>(
-    course?.pricing ?? { 1: 0, 2: 0, 3: 0, 6: 0 },
-  );
+  const defaultPricing: Record<DurationMonths, number> = {
+    1: 0,
+    2: 0,
+    3: 0,
+    6: 0,
+  };
+
+  const [pricing, setPricing] =
+    useState<Record<DurationMonths, number>>(
+      course?.pricing
+        ? { ...defaultPricing, ...course.pricing }
+        : defaultPricing
+    );
 
   // Reset form when dialog opens with new course data
   const handleOpenChange = (o: boolean) => {
     if (o && course) {
       setName(course.name);
-      setDesc(course.description);
-      setPricing(course.pricing);
+      setDesc(course.description ?? "");
+      setPricing({
+        1: 0,
+        2: 0,
+        3: 0,
+        6: 0,
+        ...course.pricing,
+      });
     } else if (o) {
       setName("");
       setDesc("");

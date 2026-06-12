@@ -116,6 +116,7 @@ export default function NewStudent() {
       scholarship,
       installments: ins,
     });
+    console.log(student);
 
   console.log(courses);
 

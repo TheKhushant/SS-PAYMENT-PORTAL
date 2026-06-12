@@ -31,7 +31,7 @@ export default function NewStudent() {
     { id: "i-1", amount: 0, dueDate: new Date().toISOString().slice(0, 10) },
   ]);
 
-  const selectedCourse = courses.find((c) => c._id === courseId);
+  // const selectedCourse = courses.find((c) => c._id === courseId);
   const finalFee = Math.max(fee - discount - scholarship, 0);
   const planned = installments.reduce((a, i) => a + Number(i.amount || 0), 0);
   const remaining = finalFee - planned;

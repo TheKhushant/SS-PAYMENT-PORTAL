@@ -9,28 +9,28 @@ const daysFromNow = (d: number) => {
 
 export const seedCourses: Course[] = [
   {
-    id: "c-mern",
+    _id: "c-mern",
     name: "MERN Stack",
     description: "Full-stack web development with MongoDB, Express, React, Node.",
     durations: [1, 2, 3, 6],
     pricing: { 1: 5000, 2: 8000, 3: 12000, 6: 20000 },
   },
   {
-    id: "c-python",
+    _id: "c-python",
     name: "Python & Data Science",
     description: "Python, Pandas, NumPy, ML fundamentals.",
     durations: [1, 2, 3, 6],
     pricing: { 1: 4500, 2: 7500, 3: 11000, 6: 18000 },
   },
   {
-    id: "c-java",
+    _id: "c-java",
     name: "Java Full Stack",
     description: "Core Java, Spring Boot, REST APIs.",
     durations: [1, 2, 3, 6],
     pricing: { 1: 5500, 2: 8500, 3: 12500, 6: 21000 },
   },
   {
-    id: "c-ui",
+    _id: "c-ui",
     name: "UI/UX Design",
     description: "Figma, design systems, user research.",
     durations: [1, 2, 3, 6],

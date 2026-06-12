@@ -8,11 +8,27 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:5173','http://localhost:5174'],
+    origin: ['http://localhost:5173', 'https://ss-payment-portal.onrender.com'],
     credentials: true,
   })
 );
+// const allowedOrigins = [
+//   'http://localhost:5173',
+//   'https://ss-payment-portal.onrender.com',
+// ];
 
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error('Not allowed by CORS'));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
 app.use(express.json());
 
 // Connect DB

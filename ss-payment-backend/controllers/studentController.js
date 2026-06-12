@@ -14,7 +14,7 @@ exports.getStudents = async (req, res) => {
 // Get single student
 exports.getStudent = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id).populate('courseId', 'name');
+    const student = await Student.findById(req.params._id).populate('courseId', 'name');
     if (!student) return res.status(404).json({ message: 'Student not found' });
     res.json(student);
   } catch (err) {
@@ -35,7 +35,7 @@ exports.createStudent = async (req, res) => {
 // Update student
 exports.updateStudent = async (req, res) => {
   try {
-    const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const student = await Student.findByIdAndUpdate(req.params._id, req.body, { new: true });
     if (!student) return res.status(404).json({ message: 'Student not found' });
     res.json(student);
   } catch (err) {
@@ -46,7 +46,7 @@ exports.updateStudent = async (req, res) => {
 // Delete student
 exports.deleteStudent = async (req, res) => {
   try {
-    const student = await Student.findByIdAndDelete(req.params.id);
+    const student = await Student.findByIdAndDelete(req.params._id);
     if (!student) return res.status(404).json({ message: 'Student not found' });
     res.json({ message: 'Student deleted successfully' });
   } catch (err) {
@@ -58,7 +58,7 @@ exports.deleteStudent = async (req, res) => {
 exports.addNote = async (req, res) => {
   try {
     const { text } = req.body;
-    const student = await Student.findById(req.params.id);
+    const student = await Student.findById(req.params._id);
     if (!student) return res.status(404).json({ message: 'Student not found' });
 
     student.notes.push({ text });

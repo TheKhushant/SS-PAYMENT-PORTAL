@@ -12,6 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, IndianRupee, Mail, Phone, GraduationCap, CalendarDays, Building2 } from "lucide-react";
 import { AddPaymentDialog } from "@/components/add-payment-dialog";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
+
+
+
 
 export default function StudentProfile() {
   const { id } = useParams<{ id: string }>();
@@ -19,8 +23,14 @@ export default function StudentProfile() {
   const navigate = useNavigate();
   const [openPay, setOpenPay] = useState(false);
   const [note, setNote] = useState("");
-
-  const student = students.find((s) => s.id === id);
+  console.log("Route ID:", id);
+  console.log("Students:", students);
+  const student = students.find(
+    (s: any) => String(s._id) === String(id)
+  );
+  const location = useLocation();
+  console.log("URL:", location.pathname);
+  console.log("Params:", useParams());
   if (!student) {
     return (
       <div className="text-center py-20">

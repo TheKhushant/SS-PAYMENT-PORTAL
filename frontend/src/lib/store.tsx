@@ -157,7 +157,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
         if (!mounted) return;
 
-        setStudents(sRes.data || []);
+        setStudents(
+          (sRes.data || []).map((student: any) => ({
+            ...student,
+            id: student._id,
+          }))
+        );
         setCourses(cRes.data || []);
         setPayments(pRes.data || []);
         setRequests([]);
@@ -292,7 +297,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 //   const updateStudent: DataCtx["updateStudent"] = (id, patch) => {
 //     setStudents((arr) =>
 //       arr.map((s) =>
-//         s.id === id
+//         s._id === id
 //           ? { ...s, ...patch, installments: recomputeInstallments(patch.installments ?? s.installments) }
 //           : s,
 //       ),
@@ -312,7 +317,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
 //     setStudents((arr) =>
 //       arr.map((s) => {
-//         if (s.id !== p.studentId) return s;
+//         if (s._id !== p.studentId) return s;
 //         let remaining = p.amount;
 //         const ins = s.installments.map((i) => {
 //           if (i.status === "paid" || remaining <= 0) return i;
@@ -352,7 +357,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 //   const addNote: DataCtx["addNote"] = (studentId, text) => {
 //     const note: StudentNote = { id: uid("n"), text, createdAt: new Date().toISOString() };
 //     setStudents((arr) =>
-//       arr.map((s) => (s.id === studentId ? { ...s, notes: [note, ...s.notes] } : s)),
+//       arr.map((s) => (s._id === studentId ? { ...s, notes: [note, ...s.notes] } : s)),
 //     );
 //   };
 

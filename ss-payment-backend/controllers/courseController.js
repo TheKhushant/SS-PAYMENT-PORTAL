@@ -11,6 +11,6 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.updateCourse = async (req, res) => {
-  const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const course = await Course.findByIdAndUpdate(req.params._id, req.body, { new: true });
   res.json(course);
 };

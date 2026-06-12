@@ -6,7 +6,7 @@ const protect = (req, res, next) => {
   if (!token || !token.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
-
+  
   try {
     token = token.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

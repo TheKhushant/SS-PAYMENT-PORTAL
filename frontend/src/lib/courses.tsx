@@ -30,7 +30,7 @@ export default function CoursesPage() {
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {courses.map((c) => (
-          <Card key={c.id} className="shadow-soft">
+          <Card key={c._id} className="shadow-soft">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>

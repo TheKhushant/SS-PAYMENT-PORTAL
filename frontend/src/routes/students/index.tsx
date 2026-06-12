@@ -40,7 +40,7 @@ export default function StudentsList() {
     const ql = q.trim().toLowerCase();
     return students
       .filter((s) => {
-        if (ql && !`${s.name} ${s.mobile} ${s.college} ${courses.find((c) => c.id === s.courseId)?.name ?? ""}`
+        if (ql && !`${s.name} ${s.mobile} ${s.college} ${courses.find((c) => c._id === s.courseId)?.name ?? ""}`
           .toLowerCase()
           .includes(ql)) return false;
         if (courseId !== "all" && s.courseId !== courseId) return false;
@@ -51,7 +51,7 @@ export default function StudentsList() {
       .map((s) => ({
         ...s,
         totals: studentTotals(s),
-        course: courses.find((c) => c.id === s.courseId)
+        course: courses.find((c) => c._id === s.courseId)
       }));
   }, [students, courses, q, courseId, duration, statusF]);
 
@@ -87,7 +87,7 @@ export default function StudentsList() {
             <SelectContent>
               <SelectItem value="all">All courses</SelectItem>
               {courses.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
+                <SelectItem key={c._id} value={c._id}>
                   {c.name}
                 </SelectItem>
               ))}

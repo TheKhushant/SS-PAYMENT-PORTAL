@@ -9,6 +9,8 @@ import type {
   Student,
   // StudentNote,
 } from "./types";
+
+
 // import {
 //   seedActivity,
 //   seedCourses,
@@ -21,7 +23,7 @@ import api from './api';
 interface AuthCtx {
   isAuthenticated: boolean;
   user: { name: string; email: string } | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -41,18 +43,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
-  const login = (email: string, password: string) => {
-    if (email === "admin@institute.com" && password === "admin123") {
-      const u = { name: "Admin", email };
-      setUser(u);
-      try { localStorage.setItem(AUTH_KEY, JSON.stringify(u)); } catch {}
-      return true;
-    }
-    return false;
-  };
+  const login = async (email:string,password:string) => {
+      try {
+          const res = await api.post('/auth/login',{
+              email,
+              password
+          });
+
+          localStorage.setItem("token",res.data.token);
+
+          setUser(res.data.user);
+
+          localStorage.setItem(
+              AUTH_KEY,
+              JSON.stringify(res.data.user)
+          );
+
+          return true;
+      } catch {
+          return false;
+      }
+  }
 
   const logout = () => {
     setUser(null);
+    try { localStorage.removeItem("token"); } catch {}
     try { localStorage.removeItem(AUTH_KEY); } catch {}
   };
 
@@ -84,7 +99,7 @@ interface DataCtx {
   addPayment: (p: Omit<Payment, "id">) => Promise<Payment>;
   addNote: (studentId: string, text: string) => Promise<void>;
   updateCourse: (id: string, patch: Partial<Course>) => Promise<void>;
-  addCourse: (c: Omit<Course, "id">) => Promise<Course>;
+  addCourse: (c: Omit<Course, "_id">) => Promise<Course>;
   // approveRequest: (id: string, method?: Payment["method"]) => void;
   // rejectRequest: (id: string) => void;
   // deleteCourse: (id: string) => void;
@@ -113,29 +128,54 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [requests, setRequests] = useState<PaymentRequest[]>([]);
   const [activity] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
 
   // Load initial data
   useEffect(() => {
+    let mounted = true;
+
     const loadData = async () => {
+      setLoading(true);
+
       try {
-        const [sRes, cRes, pRes, rRes] = await Promise.all([
+        if (!isAuthenticated) {
+          if (mounted) {
+            setStudents([]);
+            setCourses([]);
+            setPayments([]);
+            setRequests([]);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const [sRes, cRes, pRes] = await Promise.all([
           api.get('/students'),
           api.get('/courses'),
           api.get('/payments'),
-          api.get('/requests') // if you have this route
         ]);
-        setStudents(sRes.data);
-        setCourses(cRes.data);
-        setPayments(pRes.data);
-        setRequests(rRes.data || []);
+
+        if (!mounted) return;
+
+        setStudents(sRes.data || []);
+        setCourses(cRes.data || []);
+        setPayments(pRes.data || []);
+        setRequests([]);
       } catch (err) {
-        console.error("Failed to load data", err);
+        console.error('Failed to load data', err);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
+
     loadData();
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated]);
 
   const addStudent = async (data: any) => {
     const res = await api.post('/students', data);
@@ -170,7 +210,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const updateCourse = async (id: string, patch: any) => {
     const res = await api.put(`/courses/${id}`, patch);
-    setCourses(prev => prev.map(c => c.id === id ? res.data : c));
+    setCourses(prev => prev.map(c => c._id === id ? res.data : c));
   };
 
   const approveRequest = async (id: string) => {
@@ -183,7 +223,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const deleteCourse = async (id: string) => {
     await api.delete(`/courses/${id}`);
-    setCourses(prev => prev.filter(c => c.id !== id));
+    setCourses(prev => prev.filter(c => c._id !== id));
   };
 
   const addCourse = async (data: any) => {
@@ -317,7 +357,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 //   };
 
 //   const updateCourse: DataCtx["updateCourse"] = (id, patch) => {
-//     setCourses((arr) => arr.map((c) => (c.id === id ? { ...c, ...patch } : c)));
+//     setCourses((arr) => arr.map((c) => (c._id === id ? { ...c, ...patch } : c)));
 //     log({ type: "course", message: `Course updated` });
 //   };
 
@@ -329,7 +369,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 //   };
 
 //   const deleteCourse: DataCtx["deleteCourse"] = (id) => {
-//     setCourses((arr) => arr.filter((c) => c.id !== id));
+//     setCourses((arr) => arr.filter((c) => c._id !== id));
 //   };
 
 //   const value = useMemo<DataCtx>(

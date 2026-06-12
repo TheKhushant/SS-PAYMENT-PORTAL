@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 export default function ReportsPage() {
   const { students, courses, payments } = useData();
-  const courseName = (id: string) => courses.find((c) => c.id === id)?.name ?? "—";
+  const courseName = (id: string) => courses.find((c) => c._id === id)?.name ?? "—";
 
   const exportStudents = () => {
     downloadCSV("students.csv", students.map((s) => {

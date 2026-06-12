@@ -54,13 +54,13 @@ export default function AnalyticsPage() {
     }
 
     const courseRev = courses.map((c) => {
-      const studentIds = students.filter((s) => s.courseId === c.id).map((s) => s.id);
+      const studentIds = students.filter((s) => s.courseId === c._id).map((s) => s.id);
       const rev = payments.filter((p) => studentIds.includes(p.studentId)).reduce((a, p) => a + p.amount, 0);
       return { name: c.name, revenue: rev };
     });
 
     const pendingBreakdown = courses.map((c) => {
-      const rel = students.filter((s) => s.courseId === c.id);
+      const rel = students.filter((s) => s.courseId === c._id);
       const p = rel.reduce((a, s) => a + studentTotals(s).remaining, 0);
       return { name: c.name, value: p };
     }).filter((x) => x.value > 0);

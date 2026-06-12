@@ -22,30 +22,42 @@ export default function NewStudent() {
   const [email, setEmail] = useState("");
   const [college, setCollege] = useState("");
   const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().slice(0, 10));
-  const [courseId, setCourseId] = useState(courses[0]?.id ?? "");
+  const [courseId, setCourseId] = useState("");
   const [duration, setDuration] = useState<DurationMonths>(3);
-  const [fee, setFee] = useState<number>(courses[0]?.pricing[3] ?? 0);
+  const [fee, setFee] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [scholarship, setScholarship] = useState(0);
   const [installments, setInstallments] = useState<Omit<Installment, "status">[]>([
     { id: "i-1", amount: 0, dueDate: new Date().toISOString().slice(0, 10) },
   ]);
 
-  const selectedCourse = courses.find((c) => c.id === courseId);
+  const selectedCourse = courses.find((c) => c._id === courseId);
   const finalFee = Math.max(fee - discount - scholarship, 0);
   const planned = installments.reduce((a, i) => a + Number(i.amount || 0), 0);
   const remaining = finalFee - planned;
 
   const onCourseChange = (id: string) => {
     setCourseId(id);
-    const c = courses.find((x) => x.id === id);
-    if (c) setFee(c.pricing[duration] ?? 0);
+    const course = courses.find((x) => x._id === id);
+
+    console.log("Selected:", id);
+    console.log("Found:", course);
+    if (course && course.pricing) {
+      const courseFee = course.pricing[duration as keyof typeof course.pricing];
+      setFee(courseFee ?? 0);
+    } else {
+      setFee(0);
+    }
   };
 
   const onDurationChange = (d: string) => {
     const dn = Number(d) as DurationMonths;
     setDuration(dn);
-    if (selectedCourse) setFee(selectedCourse.pricing[dn] ?? 0);
+    const course = courses.find((x) => x._id === courseId);
+    if (course && course.pricing) {
+      const courseFee = course.pricing[dn as keyof typeof course.pricing];
+      setFee(courseFee ?? 0);
+    }
   };
 
   const updateInstallment = (idx: number, patch: Partial<Omit<Installment, "status">>) =>
@@ -68,8 +80,15 @@ export default function NewStudent() {
     setInstallments((arr) => arr.map((i, k) => ({ ...i, amount: per + (k === arr.length - 1 ? rem : 0) })));
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // console.log("DEBUG:", {
+    //   name,
+    //   mobile,
+    //   courseId,
+    // });
+    console.log(courses);
+    
     if (!name || !mobile || !courseId) return toast.error("Fill required fields");
     if (planned !== finalFee) return toast.error("Installments must equal final fee");
 
@@ -84,19 +103,24 @@ export default function NewStudent() {
       };
     });
 
-    const s = addStudent({
-      name, mobile, email, college,
-      admissionDate: new Date(admissionDate).toISOString(),
-      courseId, 
-      durationMonths: duration,
-      courseFee: fee, 
-      discount, 
-      scholarship,
-      installments: ins,
-    });
+    const student = await addStudent({
+    name,
+    mobile,
+    email,
+    college,
+    admissionDate: new Date(admissionDate).toISOString(),
+    courseId,
+    durationMonths: duration,
+    courseFee: fee,
+    discount,
+    scholarship,
+    installments: ins,
+  });
 
-    toast.success("Student created");
-    navigate(`/students/${s.id}`);
+  console.log(courses);
+
+  toast.success("Student created");
+  navigate(`/students/${student.id}`);
   };
 
   return (
@@ -141,18 +165,35 @@ export default function NewStudent() {
             <CardHeader><CardTitle>Course & Fee</CardTitle></CardHeader>
             <CardContent className="grid sm:grid-cols-2 gap-4">
               <Field label="Course">
-                <Select value={courseId} onValueChange={onCourseChange}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={courseId ?? ""}
+                  onValueChange={onCourseChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+
                   <SelectContent>
-                    {courses.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    {courses
+                      .filter(
+                        (c) =>
+                          c.pricing &&
+                          Object.keys(c.pricing).length > 0
+                      )
+                      .map((c) => (
+                        <SelectItem
+                          key={c._id}
+                          value={c._id}
+                        >
+                          {c.name}
+                        </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Field>
               <Field label="Internship Duration">
                 <Select value={String(duration)} onValueChange={onDurationChange}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select duration" /></SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 6].map((n) => (
                       <SelectItem key={n} value={String(n)}>
@@ -163,13 +204,28 @@ export default function NewStudent() {
                 </Select>
               </Field>
               <Field label="Course Fee (editable)">
-                <Input type="number" value={fee} onChange={(e) => setFee(Number(e.target.value))} />
+                <Input 
+                  type="number" 
+                  value={fee} 
+                  onChange={(e) => setFee(Number(e.target.value))} 
+                  min="0"
+                />
               </Field>
               <Field label="Discount">
-                <Input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} />
+                <Input 
+                  type="number" 
+                  value={discount} 
+                  onChange={(e) => setDiscount(Number(e.target.value))} 
+                  min="0"
+                />
               </Field>
               <Field label="Scholarship">
-                <Input type="number" value={scholarship} onChange={(e) => setScholarship(Number(e.target.value))} />
+                <Input 
+                  type="number" 
+                  value={scholarship} 
+                  onChange={(e) => setScholarship(Number(e.target.value))} 
+                  min="0"
+                />
               </Field>
               <div className="rounded-lg bg-primary-soft text-primary p-3 flex items-center justify-between">
                 <span className="text-sm font-medium">Final Fee</span>
@@ -186,7 +242,7 @@ export default function NewStudent() {
               </div>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" size="sm" onClick={splitEvenly}>Split evenly</Button>
-                <Button type="button" size="sm" onClick={addInstallment}><Plus /> Add</Button>
+                <Button type="button" size="sm" onClick={addInstallment}><Plus className="mr-1 size-4" /> Add</Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -199,6 +255,7 @@ export default function NewStudent() {
                       type="number" 
                       value={i.amount} 
                       onChange={(e) => updateInstallment(idx, { amount: Number(e.target.value) })} 
+                      min="0"
                     />
                   </div>
                   <div className="col-span-4">

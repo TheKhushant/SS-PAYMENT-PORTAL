@@ -1,12 +1,29 @@
 export type DurationMonths = 1 | 2 | 3 | 6;
 
-export interface Course {
-  id: string;
+// export interface Course {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   durations: DurationMonths[];
+//   pricing: Record<DurationMonths, number>; // partial fine, but typed full
+// }
+
+export type Course = {
+  _id: string;
   name: string;
-  description: string;
+  description?: string;
+  pricing?: Partial<Record<DurationMonths, number>>;
   durations: DurationMonths[];
-  pricing: Record<DurationMonths, number>; // partial fine, but typed full
-}
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CoursePayload = {
+  name: string;
+  description?: string;
+  pricing?: Partial<Record<DurationMonths, number>>;
+  durations: DurationMonths[];
+};
 
 export type InstallmentStatus = "paid" | "upcoming" | "overdue";
 

@@ -32,7 +32,7 @@ export default function StudentProfile() {
     );
   }
 
-  const course = courses.find((c) => c.id === student.courseId);
+  const course = courses.find((c) => c._id === student.courseId);
   const totals = studentTotals(student);
   const pct = totals.finalFee > 0 ? Math.round((totals.paid / totals.finalFee) * 100) : 0;
   const myPayments = useMemo(

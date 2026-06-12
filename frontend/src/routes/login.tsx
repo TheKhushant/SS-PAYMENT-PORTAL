@@ -17,21 +17,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState("admin123");
   const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async(e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      const ok = auth.login(email, password);
-      setLoading(false);
+    
+    const ok = await auth.login(email,password);
+    setLoading(false);
 
-      if (ok) {
-        toast.success("Welcome back, Admin");
-        navigate(redirect ?? "/dashboard");
-      } else {
-        toast.error("Invalid credentials");
-      }
-    }, 350);
+    if (ok) {
+      toast.success("Welcome back, Admin");
+      navigate(redirect ?? "/dashboard");
+    } else {
+      toast.error("Invalid credentials");
+    }
+    
   };
 
   return (
@@ -102,7 +102,7 @@ export default function LoginPage() {
 
           <div className="rounded-lg border bg-muted/50 p-3 text-xs text-muted-foreground">
             <div className="font-medium text-foreground mb-1">Demo credentials</div>
-            admin@institute.com / admin123
+            admin@gmail.com / 123456
           </div>
         </form>
       </div>

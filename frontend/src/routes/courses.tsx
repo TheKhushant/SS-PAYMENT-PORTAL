@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useData, inr } from "@/lib/store";
-import type { Course, DurationMonths } from "@/lib/types";
+import type {
+  // ActivityLog,
+  Course,
+  CoursePayload,
+  DurationMonths,
+  // Payment,
+  // PaymentRequest,
+  // Student,
+} from "@/lib/types";
+// import type { Course, CoursePayload, DurationMonths } from "@/lib/types";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +28,7 @@ export default function CoursesPage() {
   const { courses, updateCourse, addCourse } = useData();
   const [editing, setEditing] = useState<Course | null>(null);
   const [open, setOpen] = useState(false);
-
+  
   return (
     <>
       <PageHeader
@@ -34,7 +43,7 @@ export default function CoursesPage() {
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {courses.map((c) => (
-          <Card key={c.id} className="shadow-soft">
+          <Card key={c._id} className="shadow-soft">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
@@ -58,7 +67,7 @@ export default function CoursesPage() {
                       {d} Month{d > 1 ? "s" : ""}
                     </div>
                     <div className="text-base font-semibold mt-0.5">
-                      {inr(c.pricing[d] ?? 0)}
+                      {inr(c.pricing?.[d] ?? 0)}
                     </div>
                   </div>
                 ))}
@@ -74,7 +83,7 @@ export default function CoursesPage() {
         course={editing}
         onSave={(data) => {
           if (editing) {
-            updateCourse(editing.id, data);
+            updateCourse(editing._id, data);
             toast.success("Course updated");
           } else {
             addCourse({ ...data, durations: ALL_DURATIONS });
@@ -95,19 +104,27 @@ function CourseDialog({
   open: boolean;
   onOpenChange: (o: boolean) => void;
   course: Course | null;
-  onSave: (data: Omit<Course, "id">) => void;
+  onSave: (data: CoursePayload) => void;
 }) {
   const [name, setName] = useState(course?.name ?? "");
   const [desc, setDesc] = useState(course?.description ?? "");
-  const [pricing, setPricing] = useState<Record<DurationMonths, number>>(
-    course?.pricing ?? { 1: 0, 2: 0, 3: 0, 6: 0 }
-  );
+  const [pricing, setPricing] = useState<Record<DurationMonths, number>>({
+    1: course?.pricing?.[1] ?? 0,
+    2: course?.pricing?.[2] ?? 0,
+    3: course?.pricing?.[3] ?? 0,
+    6: course?.pricing?.[6] ?? 0,
+  });
 
   const handleOpenChange = (o: boolean) => {
     if (o) {
       setName(course?.name ?? "");
       setDesc(course?.description ?? "");
-      setPricing(course?.pricing ?? { 1: 0, 2: 0, 3: 0, 6: 0 });
+      setPricing({
+        1: course?.pricing?.[1] ?? 0,
+        2: course?.pricing?.[2] ?? 0,
+        3: course?.pricing?.[3] ?? 0,
+        6: course?.pricing?.[6] ?? 0,
+      });
     }
     onOpenChange(o);
   };

@@ -4,6 +4,11 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 const app = express();
+const dns = require('dns');
+dns.setServers([
+  '0.0.0.0',
+  '1.1.1.1',
+])
 
 // Middleware
 app.use(

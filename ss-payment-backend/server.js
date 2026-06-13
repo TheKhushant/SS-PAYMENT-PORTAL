@@ -13,7 +13,7 @@ dns.setServers([
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://ss-payment-portal-21ar.onrender.com'],
+    origin: ['http://localhost:5173', 'https://https://ss-payment-portal.vercel.app'],
     credentials: true,
   })
 );

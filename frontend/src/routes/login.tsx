@@ -13,8 +13,8 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect");
 
-  const [email, setEmail] = useState("admin@institute.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("test@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [loading, setLoading] = useState(false);
 
   const submit = async(e: React.FormEvent) => {
